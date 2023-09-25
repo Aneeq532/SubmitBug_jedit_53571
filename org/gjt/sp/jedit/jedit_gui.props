@@ -532,7 +532,8 @@ plugins.code=new PluginsProvider();
 help-menu=about \
      help \
      tip-of-the-day \
-     userFeedback
+     userFeedback \
+     SubmitBug
 #}}}
 
 #}}}
