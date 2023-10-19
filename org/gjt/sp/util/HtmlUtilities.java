@@ -41,6 +41,7 @@ import org.gjt.sp.jedit.syntax.SyntaxStyle;
 
 public class HtmlUtilities
 {
+
 	//{{{ public section
 
 	//{{{ parseHighlightStyle()
@@ -92,6 +93,7 @@ public class HtmlUtilities
 		if (c != null)
 			tag.append("background:").append(color2html(c));
 		f = style.getFont();
+
 		if (f.isBold())
 			tag.append("font-weight:bold;");
 		if (f.isItalic())
@@ -104,7 +106,7 @@ public class HtmlUtilities
 	 * Creates an HTML presentation of a given string, where selected substrings
 	 * are highlighted with a given syntax style tag.
 	 *
-	 * @param s The (non-HTML) string to highlight. 
+	 * @param s The (non-HTML) string to highlight.
 	 * @param styleTag The HTML string representing the highlight style.
 	 * @param ranges The indices of the substrings to highlight, in pairs: The start
 	 *               index of a substring followed by the end index of the substring.
@@ -112,7 +114,7 @@ public class HtmlUtilities
 	 */
 	public static String highlightString(String s, String styleTag, List<Integer> ranges)
 	{
-		StringBuilder sb = new StringBuilder("<html><style>.highlight {");
+		StringBuilder sb = new StringBuilder("<html><style>.highlightcolor { background-color: red; } </style>");
 		sb.append(styleTag);
 		sb.append("}</style><body>");
 		int lastIndex = 0;
@@ -121,7 +123,7 @@ public class HtmlUtilities
 			int rangeStart = ranges.get(i);
 			int rangeEnd = ranges.get(i + 1);
 			appendString2html(sb, s.substring(lastIndex, rangeStart));
-			sb.append("<span class=\"highlight\">");
+			sb.append("<span class=\"highlightcolor\">");
 			appendString2html(sb, s.substring(rangeStart, rangeEnd));
 			sb.append("</span>");
 			lastIndex = rangeEnd;

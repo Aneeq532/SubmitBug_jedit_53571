@@ -109,6 +109,7 @@ public class HyperSearchResults extends JPanel implements DefaultFocusComponent
 		resultTree.setVisibleRowCount(16);
 		resultTree.setRootVisible(false);
 		resultTree.setShowsRootHandles(true);
+
 		//the ESCAPE keystroke is assigned to hideTip action by swing
 		//it breaks the action usually assigned to close-docking-area by jEdit,
 		//so we remove this keystroke binding bug #1955140
@@ -171,10 +172,12 @@ public class HyperSearchResults extends JPanel implements DefaultFocusComponent
 			{
 				Object userObject = node.getUserObject();
 				if (!(userObject instanceof HyperSearchResult))
+
 					return true;
 				HyperSearchResult result = (HyperSearchResult) userObject;
 				if (result.pathEquals(buffer.getSymlinkPath()))
 					visitor.visit(buffer, result);
+
 				return true;
 			}
 		});
@@ -222,6 +225,7 @@ public class HyperSearchResults extends JPanel implements DefaultFocusComponent
 	 */
 	public JTree getTree()
 	{
+
 		return resultTree;
 	} //}}}
 
@@ -265,6 +269,7 @@ public class HyperSearchResults extends JPanel implements DefaultFocusComponent
 	{
 		stop.setEnabled(false);
 		final int nodeCount = searchNode.getChildCount();
+
 		if (nodeCount < 1)
 		{
 			searchFailed();
@@ -504,6 +509,7 @@ public class HyperSearchResults extends JPanel implements DefaultFocusComponent
 				String prop = jEdit.getProperty(HIGHLIGHT_PROP);
 				Font f = (resultTree != null) ? resultTree.getFont() :
 					UIManager.getFont("Tree.font");
+
 				SyntaxStyle style = new StyleEditor(jEdit.getActiveView(),
 					HtmlUtilities.parseHighlightStyle(prop, f),
 					"hypersearch").getStyle();
@@ -561,23 +567,29 @@ public class HyperSearchResults extends JPanel implements DefaultFocusComponent
 		{
 			String s = super.convertValueToText(value, selected, expanded, leaf,
 				row, hasFocus);
+			if (s.contains("//") || s.contains("/*") || s.contains("*") ) {
+				return "<html><span style='background-color:#00FF00;'>" + s + "</span></html>";
+			}
 			String newProp = jEdit.getProperty(HIGHLIGHT_PROP);
+
 			if (newProp == null || newProp.isEmpty())
 				return s;
 			DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
+
 			while (node != null && !(node.getUserObject() instanceof HyperSearchOperationNode))
 			{
 				node = (DefaultMutableTreeNode) node.getParent();
 			}
 			if (node == null)
 				return s;
+
 			if (! newProp.equals(prop))
 			{
 				prop = newProp;
-				Font f = (resultTree != null) ? resultTree.getFont() :
-					UIManager.getFont("Tree.font");
+				Font f = (resultTree != null) ? resultTree.getFont() : UIManager.getFont("Tree.font");
 				styleTag = HtmlUtilities.style2html(prop, f);
 			}
+
 			SearchMatcher matcher =
 				((HyperSearchOperationNode) node.getUserObject()).getSearchMatcher();
 			int i = s.indexOf(": ");
@@ -984,8 +996,7 @@ public class HyperSearchResults extends JPanel implements DefaultFocusComponent
 			plainFont = UIManager.getFont("Tree.font");
 			if(plainFont == null)
 				plainFont = jEdit.getFontProperty("metal.secondary.font");
-			boldFont = new Font(plainFont.getName(),Font.BOLD,
-				plainFont.getSize());
+			boldFont = new Font(plainFont.getName(),Font.BOLD, plainFont.getSize()); //Uper Wali line bold ho rahi ha
 		} //}}}
 
 		@Override
@@ -1020,6 +1031,7 @@ public class HyperSearchResults extends JPanel implements DefaultFocusComponent
 			else if(node.getUserObject() instanceof HyperSearchFolderNode)
 			{
 				setFont(plainFont);
+
 				setText(node.toString() + " (" + node.getChildCount() + " files/folders)");
 			}
 			else if(node.getUserObject() instanceof HyperSearchFileNode)
@@ -1051,6 +1063,7 @@ public class HyperSearchResults extends JPanel implements DefaultFocusComponent
 				Object userObject = node.getUserObject();
 				if (userObject instanceof HyperSearchFileNode)
 				{
+
 					resultCount += ((HyperSearchFileNode)userObject).getCount();
 					bufferCount++;
 				}
@@ -1059,6 +1072,7 @@ public class HyperSearchResults extends JPanel implements DefaultFocusComponent
 		}//}}}
 
 		Font plainFont, boldFont;
+
 	} //}}}
 
 	//{{{
@@ -1123,4 +1137,5 @@ public class HyperSearchResults extends JPanel implements DefaultFocusComponent
 		}
 
 	} //}}}
+
 }
