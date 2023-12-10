@@ -28,6 +28,16 @@ import java.awt.Component;
 import java.io.*;
 import java.io.Closeable;
 import java.util.*;
+import java.io.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+
+import java.io.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+
 
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -106,6 +116,7 @@ import org.gjt.sp.util.ThreadUtilities;
  * @author Slava Pestov
  * @author $Id: VFS.java 22454 2012-11-10 11:15:08Z thomasmey $
  */
+
 public abstract class VFS
 {
 	//{{{ Capabilities
@@ -293,7 +304,7 @@ public abstract class VFS
 			path = path.substring(0,path.length() - 1);
 
 		int index = Math.max(path.lastIndexOf('/'),
-			path.lastIndexOf(File.separatorChar));
+				path.lastIndexOf(File.separatorChar));
 		if(index == -1)
 			index = path.indexOf(':');
 
@@ -346,8 +357,8 @@ public abstract class VFS
 		// paths like /foo/bar/
 		int lastIndex = path.length() - 1;
 		while(lastIndex > 0
-			&& (path.charAt(lastIndex) == File.separatorChar
-			|| path.charAt(lastIndex) == '/'))
+				&& (path.charAt(lastIndex) == File.separatorChar
+				|| path.charAt(lastIndex) == '/'))
 		{
 			lastIndex--;
 		}
@@ -415,7 +426,7 @@ public abstract class VFS
 	public String getTwoStageSaveName(String path)
 	{
 		return MiscUtilities.constructPath(getParentOfPath(path),
-			'#' + getFileName(path) + "#save#");
+				'#' + getFileName(path) + "#save#");
 	} //}}}
 
 	//{{{ reloadDirectory() method
@@ -444,12 +455,12 @@ public abstract class VFS
 	}
 
 	/**
-	* Same as {@link #createVFSSession}, but may be called from any
-	* thread. It first checks the <code>NON_AWT_SESSION_CAP</code>
-	* capability and enters EDT thread if necessary.
-	*/
+	 * Same as {@link #createVFSSession}, but may be called from any
+	 * thread. It first checks the <code>NON_AWT_SESSION_CAP</code>
+	 * capability and enters EDT thread if necessary.
+	 */
 	public Object createVFSSessionSafe(final String path,
-	                                   final Component comp)
+									   final Component comp)
 	{
 		Object session = null;
 		if ((getCapabilities() & NON_AWT_SESSION_CAP) != 0)
@@ -531,7 +542,7 @@ public abstract class VFS
 			buffer.unsetProperty(Buffer.BACKED_UP);
 
 		ThreadUtilities.runInBackground(new BufferSaveRequest(
-			view,buffer,session,this,path));
+				view,buffer,session,this,path));
 		return true;
 	} //}}}
 
@@ -556,11 +567,11 @@ public abstract class VFS
 	 * @since jEdit 4.3pre3
 	 */
 	public static boolean copy(ProgressObserver progress, VFS sourceVFS, Object sourceSession,String sourcePath,
-				   VFS targetVFS, Object targetSession,String targetPath, Component comp, boolean canStop)
-		throws IOException
+							   VFS targetVFS, Object targetSession,String targetPath, Component comp, boolean canStop)
+			throws IOException
 	{
 		return copy(progress, sourceVFS, sourceSession, sourcePath, targetVFS, targetSession, targetPath,
-			    comp, canStop, true);
+				comp, canStop, true);
 	}
 
 	/**
@@ -585,15 +596,15 @@ public abstract class VFS
 	 * @since jEdit 5.0
 	 */
 	public static boolean copy(ProgressObserver progress, VFS sourceVFS, Object sourceSession,String sourcePath,
-		VFS targetVFS, Object targetSession,String targetPath, Component comp, boolean canStop,
-		boolean sendVFSUpdate)
-	throws IOException
+							   VFS targetVFS, Object targetSession,String targetPath, Component comp, boolean canStop,
+							   boolean sendVFSUpdate)
+			throws IOException
 	{
 		if (sourcePath.equals(targetPath))
 		{
 			Log.log(Log.WARNING, VFS.class,
-				jEdit.getProperty("ioerror.copy-self",
-					new Object[] { sourcePath }));
+					jEdit.getProperty("ioerror.copy-self",
+							new Object[] { sourcePath }));
 			return false;
 		}
 		if (progress != null)
@@ -617,7 +628,7 @@ public abstract class VFS
 				VFSFile parentTargetVFSFile = targetVFS._getFile(targetSession, parentTargetPath, comp);
 				if (parentTargetVFSFile == null)
 					throw new FileNotFoundException("target path " + parentTargetPath +
-						" doesn't exists");
+							" doesn't exists");
 				if (parentTargetVFSFile.getType() == VFSFile.DIRECTORY)
 				{
 					String targetFilename = MiscUtilities.getFileName(targetPath);
@@ -664,8 +675,8 @@ public abstract class VFS
 	 * @since jEdit 5.0
 	 */
 	public static boolean copy(ProgressObserver progress, String sourcePath,String targetPath, Component comp,
-				   boolean canStop, boolean sendVFSUpdate)
-		throws IOException
+							   boolean canStop, boolean sendVFSUpdate)
+			throws IOException
 	{
 		VFS sourceVFS = VFSManager.getVFSForPath(sourcePath);
 		VFS targetVFS = VFSManager.getVFSForPath(targetPath);
@@ -677,18 +688,18 @@ public abstract class VFS
 			if (sourceSession == null)
 			{
 				Log.log(Log.WARNING, VFS.class, "Unable to get a valid session from " + sourceVFS +
-												" for path " + sourcePath);
+						" for path " + sourcePath);
 				return false;
 			}
 			targetSession = targetVFS.createVFSSession(targetPath, comp);
 			if (targetSession == null)
 			{
 				Log.log(Log.WARNING, VFS.class, "Unable to get a valid session from " + targetVFS +
-												" for path " + targetPath);
+						" for path " + targetPath);
 				return false;
 			}
 			return copy(progress, sourceVFS, sourceSession, sourcePath, targetVFS, targetSession, targetPath,
-						comp,canStop, sendVFSUpdate);
+					comp,canStop, sendVFSUpdate);
 		}
 		finally
 		{
@@ -713,7 +724,7 @@ public abstract class VFS
 	 * @since jEdit 4.3pre3
 	 */
 	public static boolean copy(ProgressObserver progress, String sourcePath,String targetPath, Component comp, boolean canStop)
-	throws IOException
+			throws IOException
 	{
 		return copy(progress, sourcePath, targetPath, comp, canStop, true);
 	} //}}}
@@ -739,7 +750,7 @@ public abstract class VFS
 			return false;
 
 		ThreadUtilities.runInBackground(new BufferInsertRequest(
-			view,buffer,session,this,path));
+				view,buffer,session,this,path));
 		return true;
 	} //}}}
 
@@ -756,7 +767,7 @@ public abstract class VFS
 	 * @since jEdit 4.0pre2
 	 */
 	public String _canonPath(Object session, String path, Component comp)
-		throws IOException
+			throws IOException
 	{
 		return path;
 	} //}}}
@@ -777,8 +788,8 @@ public abstract class VFS
 	 * @since jEdit 4.1pre1
 	 */
 	public String[] _listDirectory(Object session, String directory,
-		String glob, boolean recursive, Component comp )
-		throws IOException
+								   String glob, boolean recursive, Component comp )
+			throws IOException
 	{
 		String[] retval = _listDirectory(session, directory, glob, recursive, comp, true, false);
 		return retval;
@@ -808,14 +819,14 @@ public abstract class VFS
 	 * @since jEdit 4.3pre5
 	 */
 	public String[] _listDirectory(Object session, String directory,
-		String glob, boolean recursive, Component comp,
-		boolean skipBinary, boolean skipHidden)
-		throws IOException
+								   String glob, boolean recursive, Component comp,
+								   boolean skipBinary, boolean skipHidden)
+			throws IOException
 	{
 		VFSFileFilter filter = new GlobVFSFileFilter(glob);
 		return _listDirectory(session, directory, filter,
-				      recursive, comp, skipBinary,
-				      skipHidden);
+				recursive, comp, skipBinary,
+				skipHidden);
 	} //}}}
 
 	//{{{ _listDirectory() method
@@ -841,14 +852,14 @@ public abstract class VFS
 	 * @since jEdit 4.3pre7
 	 */
 	public String[] _listDirectory(Object session, String directory,
-		VFSFileFilter filter, boolean recursive, Component comp,
-		boolean skipBinary, boolean skipHidden)
-		throws IOException
+								   VFSFileFilter filter, boolean recursive, Component comp,
+								   boolean skipBinary, boolean skipHidden)
+			throws IOException
 	{
 		List<String> files = new ArrayList<String>(100);
 
 		listFiles(session,new HashSet<String>(), files,directory,filter,
-			recursive, comp, skipBinary, skipHidden);
+				recursive, comp, skipBinary, skipHidden);
 
 		String[] retVal = files.toArray(new String[files.size()]);
 
@@ -870,8 +881,8 @@ public abstract class VFS
 	 * @since jEdit 4.3pre2
 	 */
 	public VFSFile[] _listFiles(Object session, String directory,
-		Component comp)
-		throws IOException
+								Component comp)
+			throws IOException
 	{
 		VFSManager.error(comp,directory,"vfs.not-supported.list",new String[] { name });
 		return null;
@@ -888,8 +899,8 @@ public abstract class VFS
 	 * @since jEdit 4.3pre2
 	 */
 	public VFSFile _getFile(Object session, String path,
-		Component comp)
-		throws IOException
+							Component comp)
+			throws IOException
 	{
 		return null;
 	} //}}}
@@ -904,7 +915,7 @@ public abstract class VFS
 	 * @since jEdit 2.7pre1
 	 */
 	public boolean _delete(Object session, String path, Component comp)
-		throws IOException
+			throws IOException
 	{
 		return false;
 	} //}}}
@@ -922,7 +933,7 @@ public abstract class VFS
 	 * @since jEdit 2.7pre1
 	 */
 	public boolean _rename(Object session, String from, String to,
-		Component comp) throws IOException
+						   Component comp) throws IOException
 	{
 		return false;
 	} //}}}
@@ -937,7 +948,7 @@ public abstract class VFS
 	 * @since jEdit 2.7pre1
 	 */
 	public boolean _mkdir(Object session, String directory, Component comp)
-		throws IOException
+			throws IOException
 	{
 		return false;
 	} //}}}
@@ -954,7 +965,7 @@ public abstract class VFS
 	 * @since jEdit 3.2pre2
 	 */
 	public void _backup(Object session, String path, Component comp)
-		throws IOException
+			throws IOException
 	{
 		VFS vfsSrc = VFSManager.getVFSForPath(path);
 		if (null == vfsSrc._getFile(session, path, comp))
@@ -968,7 +979,7 @@ public abstract class VFS
 		if (backupDir == null)
 		{
 			Log.log(Log.WARNING, VFS.class, "Backup of remote file "
-				+ path + " failed, because there is no backup directory.");
+					+ path + " failed, because there is no backup directory.");
 			return;
 		}
 		if (!backupDir.exists())
@@ -976,8 +987,8 @@ public abstract class VFS
 			// Usually that means there is no specified backup
 			// directory.
 			Log.log(Log.WARNING, VFS.class, "Backup of file " +
-				path + " failed. Directory " + backupDir +
-				" does not exist.");
+					path + " failed. Directory " + backupDir +
+					" does not exist.");
 			return;
 		}
 
@@ -992,18 +1003,18 @@ public abstract class VFS
 		Object sessionDst = vfsDst.createVFSSessionSafe(
 				backupFile.getPath(), comp);
 		if (sessionDst == null)
-			{
+		{
 			return;
-			}
+		}
 		try
 		{
 			if (!copy(null, vfsSrc, session, path,
-				vfsDst, sessionDst, backupFile.getPath(),
-				comp, true))
+					vfsDst, sessionDst, backupFile.getPath(),
+					comp, true))
 			{
 				Log.log(Log.WARNING, VFS.class, "Backup of file " +
-					path + " failed. Copy to " + backupFile +
-					" failed.");
+						path + " failed. Copy to " + backupFile +
+						" failed.");
 			}
 		}
 		finally
@@ -1027,8 +1038,8 @@ public abstract class VFS
 	 * @since jEdit 2.7pre1
 	 */
 	public InputStream _createInputStream(Object session,
-		String path, boolean ignoreErrors, Component comp)
-		throws IOException
+										  String path, boolean ignoreErrors, Component comp)
+			throws IOException
 	{
 		VFSManager.error(comp,path,"vfs.not-supported.load",new String[] { name });
 		return null;
@@ -1045,8 +1056,8 @@ public abstract class VFS
 	 * @since jEdit 2.7pre1
 	 */
 	public OutputStream _createOutputStream(Object session,
-		String path, Component comp)
-		throws IOException
+											String path, Component comp)
+			throws IOException
 	{
 		VFSManager.error(comp,path,"vfs.not-supported.save",new String[] { name });
 		return null;
@@ -1065,7 +1076,7 @@ public abstract class VFS
 	 * @since jEdit 4.1pre9
 	 */
 	public void _saveComplete(Object session, Buffer buffer, String path,
-		Component comp) throws IOException {} //}}}
+							  Component comp) throws IOException {} //}}}
 
 	//{{{ _finishTwoStageSave() method
 	/**
@@ -1082,7 +1093,7 @@ public abstract class VFS
 	 * @since jEdit 4.3pre4
 	 */
 	public void _finishTwoStageSave(Object session, Buffer buffer, String path,
-		Component comp) throws IOException
+									Component comp) throws IOException
 	{
 	} //}}}
 
@@ -1097,7 +1108,7 @@ public abstract class VFS
 	 * @since jEdit 2.7pre1
 	 */
 	public void _endVFSSession(Object session, Component comp)
-		throws IOException
+			throws IOException
 	{
 	} //}}}
 
@@ -1143,7 +1154,7 @@ public abstract class VFS
 		 * lower case.
 		 */
 		public DirectoryEntryCompare(boolean sortMixFilesAndDirs,
-			boolean sortIgnoreCase)
+									 boolean sortIgnoreCase)
 		{
 			this.sortMixFilesAndDirs = sortMixFilesAndDirs;
 			this.sortIgnoreCase = sortIgnoreCase;
@@ -1158,9 +1169,9 @@ public abstract class VFS
 			}
 
 			return StandardUtilities.compareStrings(file1.getName(),
-				file2.getName(),sortIgnoreCase);
+					file2.getName(),sortIgnoreCase);
 		}
-	} //}}}
+	}//}}}
 
 	//{{{ Private members
 	private String name;
@@ -1187,10 +1198,28 @@ public abstract class VFS
 		});
 	} //}}}
 
+
+
+	private static long toSeconds(String date_)
+	{
+		try {
+			SimpleDateFormat ThisFormat = new SimpleDateFormat("dd-MM-yyyy");
+			Date date = ThisFormat.parse(date_);
+			return date.getTime();
+		}
+		catch (ParseException here) {
+			return -1;   }
+	}
+
+
+
+
+
+
 	//{{{ recursive listFiles() method
 	private void listFiles(Object session, Collection<String> stack,
-		List<String> files, String directory, VFSFileFilter filter, boolean recursive,
-		Component comp, boolean skipBinary, boolean skipHidden) throws IOException
+						   List<String> files, String directory, VFSFileFilter filter, boolean recursive,
+						   Component comp, boolean skipBinary, boolean skipHidden) throws IOException
 	{
 		if (recursive && !MiscUtilities.isURL(directory))
 		{
@@ -1204,16 +1233,20 @@ public abstract class VFS
 				if (stack.contains(resolvedPath))
 				{
 					Log.log(Log.ERROR,this,
-						"Recursion in listFiles(): "
-						+ directory);
+							"Recursion in listFiles(): "
+									+ directory);
 					return;
 				}
 				stack.add(resolvedPath);
 			}
 		}
 
+
+
+
+
 		VFSFile[] _files = _listFiles(session,directory,
-			comp);
+				comp);
 		if(_files == null || _files.length == 0)
 			return;
 
@@ -1226,18 +1259,32 @@ public abstract class VFS
 				continue;
 			if(!filter.accept(file))
 				continue;
+
+
+//To
+			File f = new File(file.getPath());
+			long fromMod = toSeconds( jEdit.getProperty("fromModified") );
+			long toMod = toSeconds( jEdit.getProperty("toText") );
+
+
+			if( ( fromMod > f.lastModified() && toMod < f.lastModified()))
+				continue;
+
+//from
 			if(file.getType() == VFSFile.DIRECTORY
-				|| file.getType() == VFSFile.FILESYSTEM)
+					|| file.getType() == VFSFile.FILESYSTEM)
 			{
 				if(recursive)
 				{
 					String canonPath = _canonPath(session,
-						file.getPath(),comp);
+							file.getPath(),comp);
 					listFiles(session,stack,files,
-						canonPath,filter,recursive,
-						comp, skipBinary, skipHidden);
+							canonPath,filter,recursive,
+							comp, skipBinary, skipHidden);
 				}
 			}
+
+
 			else // It's a regular file
 			{
 				if (skipBinary)
@@ -1247,7 +1294,7 @@ public abstract class VFS
 						if (file.isBinary(session))
 						{
 							Log.log(Log.NOTICE,this
-								,file.getPath() + ": skipped as a binary file");
+									,file.getPath() + ": skipped as a binary file");
 							continue;
 						}
 					}
@@ -1279,10 +1326,10 @@ public abstract class VFS
 				try
 				{
 					colors.add(new ColorEntry(
-						Pattern.compile(StandardUtilities.globToRE(glob)),
-						jEdit.getColorProperty(
-						"vfs.browser.colors." + i + ".color",
-						Color.black)));
+							Pattern.compile(StandardUtilities.globToRE(glob)),
+							jEdit.getColorProperty(
+									"vfs.browser.colors." + i + ".color",
+									Color.black)));
 				}
 				catch(PatternSyntaxException e)
 				{
