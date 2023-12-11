@@ -95,10 +95,11 @@ public class SearchDialog extends EnhancedDialog
 		return dateField;
 	}
 
-	JLabel from = new JLabel(" From :");
+	JLabel from = new JLabel("Modified from:");
 	JFormattedTextField fromField = newDate("01-01-1995");
-	JLabel to = new JLabel("To:");
-	JFormattedTextField toField = newDate("01-01-2028");
+
+	JLabel to = new JLabel("Modified to:");
+	JFormattedTextField toField = newDate("01-01-2024");
 	public static SearchDialog getSearchDialog(View view)
 	{
 		SearchDialog searchDialog = viewHash.get(view);
@@ -736,24 +737,18 @@ public class SearchDialog extends EnhancedDialog
 		skipBinaryFiles = new JCheckBox(jEdit.getProperty("search.skipBinary"));
 		skipBinaryFiles.setSelected(jEdit.getBooleanProperty("search.skipBinary.toggle", true));
 
-
-
-
 		dirCheckBoxPanel.add(from);
 		dirCheckBoxPanel.add(fromField);
 		dirCheckBoxPanel.add(to);
 		dirCheckBoxPanel.add(toField);
 		fromField.addPropertyChangeListener("value", new PropertyChangeListener() {
 			@Override   public void propertyChange(PropertyChangeEvent evt) {
-				jEdit.setProperty("fromModified", fromField.getText());
+				jEdit.setProperty("ModifiedFrom", fromField.getText());
 			}  });
 		toField.addPropertyChangeListener("value", new PropertyChangeListener() {
 			@Override   public void propertyChange(PropertyChangeEvent evt) {
-				jEdit.setProperty("toText", toField.getText());
+				jEdit.setProperty("toDate", toField.getText());
 			}});
-
-
-
 
 		dirCheckBoxPanel.add(searchSubDirectories);
 		dirCheckBoxPanel.add(skipHidden);

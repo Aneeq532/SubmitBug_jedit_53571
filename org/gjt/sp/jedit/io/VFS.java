@@ -1259,18 +1259,12 @@ public abstract class VFS
 				continue;
 			if(!filter.accept(file))
 				continue;
-
-
-//To
 			File f = new File(file.getPath());
-			long fromMod = toSeconds( jEdit.getProperty("fromModified") );
-			long toMod = toSeconds( jEdit.getProperty("toText") );
-
+			long fromMod = toSeconds( jEdit.getProperty("ModifiedFrom") );
+			long toMod = toSeconds( jEdit.getProperty("toDate") );
 
 			if( ( fromMod > f.lastModified() && toMod < f.lastModified()))
 				continue;
-
-//from
 			if(file.getType() == VFSFile.DIRECTORY
 					|| file.getType() == VFSFile.FILESYSTEM)
 			{
